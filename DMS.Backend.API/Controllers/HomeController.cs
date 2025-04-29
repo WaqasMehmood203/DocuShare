@@ -76,16 +76,12 @@ namespace DMS.Backend.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
                 TempData["Success"] = "Registered Successfully";
                 return RedirectToAction("Login");
-            }
-            else
-            {
-
             }
             return View();
         }
