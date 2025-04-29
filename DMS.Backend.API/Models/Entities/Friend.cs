@@ -10,9 +10,9 @@ namespace DMS.Backend.Models.Entities
     public class Friend 
     {
         public Guid Id { get; set; }
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         public User User { get; set; } = null!;
-        public string FriendId { get; set; }
+        public Guid FriendId { get; set; }
         public User FriendUser { get; set; } = null!;
     }
 }

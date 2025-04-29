@@ -10,9 +10,9 @@ namespace DMS.Backend.Models.Entities
     public class FriendRequest : BaseModel
     {
         public Guid Id { get; set; }
-        public string SenderId { get; set; }
+        public Guid SenderId { get; set; }
         public User Sender { get; set; } = null!;
-        public string ReceiverId { get; set; }
+        public Guid ReceiverId { get; set; }
         public User Receiver { get; set; } = null!;
 
         public Enums.FriendRequestStatus Status { get; set; }

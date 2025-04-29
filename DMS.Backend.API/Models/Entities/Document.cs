@@ -21,5 +21,6 @@ namespace DMS.Backend.Models.Entities
         public ICollection<DocumentTag> Tags { get; set; } = new List<DocumentTag>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<DocumentShare> DocumentShares { get; set; } = new List<DocumentShare>();
     }
 }

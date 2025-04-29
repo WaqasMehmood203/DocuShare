@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DMS.Backend.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User>
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
            : base(options)
@@ -19,6 +19,7 @@ namespace DMS.Backend.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ExternalStorage> ExternalStorages { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,11 @@ namespace DMS.Backend.Data
             base.OnModelCreating(modelBuilder);
 
             // 2) Now apply your custom configurations:
+
+            // Ensure Email is unique in User
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             modelBuilder.Entity<Notification>()
                 .Ignore(n => n.UpdatedDate)
@@ -38,6 +44,18 @@ namespace DMS.Backend.Data
             modelBuilder.Entity<Document>()
                 .Property(d => d.IsUpdated)
                 .IsRequired();
+
+            modelBuilder.Entity<Document>()
+                    .HasMany(d => d.DocumentShares)
+                    .WithOne(ds => ds.Document)
+                    .HasForeignKey(ds => ds.DocumentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.DocumentShares)
+                .WithOne(ds => ds.User)
+                .HasForeignKey(ds => ds.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Friend>()
                 .HasOne(f => f.User)
@@ -62,6 +80,30 @@ namespace DMS.Backend.Data
                 .WithMany()
                 .HasForeignKey(fr => fr.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Comment>()
+        .HasOne(c => c.User)
+        .WithMany(u => u.Comments)
+        .HasForeignKey(c => c.UserId)
+        .OnDelete(DeleteBehavior.Restrict); // Matches ON DELETE NO ACTION
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Document)
+                .WithMany(d => d.Comments)
+                .HasForeignKey(c => c.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Like>()
+        .HasOne(l => l.User)
+        .WithMany(u => u.Likes)
+        .HasForeignKey(l => l.UserId)
+        .OnDelete(DeleteBehavior.Restrict); // Prevents deleting a user if they have likes
+
+            modelBuilder.Entity<Like>()
+                .HasOne(l => l.Document)
+                .WithMany(d => d.Likes)
+                .HasForeignKey(l => l.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
