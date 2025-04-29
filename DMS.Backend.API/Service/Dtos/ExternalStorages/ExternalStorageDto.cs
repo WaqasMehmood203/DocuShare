@@ -1,0 +1,16 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DMS.Backend.API.Service.Dtos.ExternalStorages
+{
+    public class ExternalStorageDto
+    {
+        [Required]
+        public Guid UserId { get; set; }
+
+        public string? GoogleDriveAccessToken { get; set; }
+        public string? OneDriveAccessToken { get; set; }
+
+        [Required]
+        public DateTime TokenExpiry { get; set; }
+    }
+}
