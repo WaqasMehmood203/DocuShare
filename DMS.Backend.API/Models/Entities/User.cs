@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace DMS.Backend.Models.Entities
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
+        [NotMapped]
+        [Required]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
         public int? Age { get; set; }
         public Enums.Gender? Gender { get; set; }
         public string? Address { get; set; }
