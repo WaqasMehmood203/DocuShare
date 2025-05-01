@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMS.Backend.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250429211750_InitialMigration")]
+    [Migration("20250501184002_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -344,7 +344,8 @@ namespace DMS.Backend.API.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ProfileImage")
                         .HasColumnType("nvarchar(max)");

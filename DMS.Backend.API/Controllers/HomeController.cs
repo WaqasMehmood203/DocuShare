@@ -8,11 +8,11 @@ namespace DMS.Backend.API.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext context;
+        private readonly ApplicationDbContext _context;
 
         public HomeController(ApplicationDbContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -32,7 +32,7 @@ namespace DMS.Backend.API.Controllers
         [HttpPost]
         public IActionResult Login(User user)
         {
-            var myUser = context.Users.Where(x =>  x.Email == user.Email && x.Password == user.Password).FirstOrDefault();
+            var myUser = _context.Users.Where(x =>  x.Email == user.Email && x.Password == user.Password).FirstOrDefault();
             if (myUser != null)
             {
                 HttpContext.Session.SetString("UserSession",myUser.Email );
@@ -76,15 +76,24 @@ namespace DMS.Backend.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
+            if (_context.Users.Any(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError(nameof(user.Email), "That email is already registered.");
+                return View(user);
+            }
             if (!ModelState.IsValid)
             {
-                await context.Users.AddAsync(user);
-                await context.SaveChangesAsync();
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
                 TempData["Success"] = "Registered Successfully";
                 return RedirectToAction("Login");
+
             }
+
             return View();
         }
+
+
 
         public IActionResult Privacy()
         {

@@ -16,11 +16,21 @@ namespace DMS.Backend.Models.Entities
         public string FirstName { get; set; } = string.Empty;
         [Required]
         public string LastName { get; set; } = string.Empty;
-        [EmailAddress]
         [Required]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [RegularExpression(
+        @"^[^@\s]+@gmail\.com$",
+        ErrorMessage = "Email must be a Gmail address (e.g. you@gmail.com)."
+    )]
         public string Email { get; set; } = string.Empty;
         [Required]
         [DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 8,
+        ErrorMessage = "Password must be at least 8 characters long.")]
+        [RegularExpression(
+        @"^(?=.*[!@#$%^&*])(?=.{8,}).*$",
+        ErrorMessage = "Password must contain at least one special character (e.g. @#$%^&*)."
+    )]
         public string Password { get; set; } = string.Empty;
         [NotMapped]
         [Required]
