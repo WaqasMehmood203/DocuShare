@@ -81,19 +81,18 @@ namespace DMS.Backend.API.Controllers
                 ModelState.AddModelError(nameof(user.Email), "That email is already registered.");
                 return View(user);
             }
+
             if (!ModelState.IsValid)
             {
+
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Registered Successfully";
                 return RedirectToAction("Login");
-
             }
 
             return View();
         }
-
-
 
         public IActionResult Privacy()
         {

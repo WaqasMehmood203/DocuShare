@@ -12,10 +12,9 @@ namespace DMS.Backend.Models.Entities
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string FilePath { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public Guid OwnerId { get; set; }
         public User Owner { get; set; } = null!;
-        public string Content { get; set; } = string.Empty;
         public Enums.DocumentVisibility Visibility { get; set; }
 
         public ICollection<DocumentTag> Tags { get; set; } = new List<DocumentTag>();

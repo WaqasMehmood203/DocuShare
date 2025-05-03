@@ -28,7 +28,7 @@ namespace DMS.Backend.Models.Entities
         [StringLength(100, MinimumLength = 8,
         ErrorMessage = "Password must be at least 8 characters long.")]
         [RegularExpression(
-        @"^(?=.*[!@#$%^&*])(?=.{8,}).*$",
+        @"^(?=.*[!@#$%^&*]).+$",
         ErrorMessage = "Password must contain at least one special character (e.g. @#$%^&*)."
     )]
         public string Password { get; set; } = string.Empty;
