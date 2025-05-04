@@ -10,9 +10,9 @@ namespace DMS.Backend.Models
     {
         public enum DocumentVisibility
         {
-            Public,
-            Private,
-            Friends
+            Public = 0,
+            Private = 1,
+            Friends = 2
         }
         public enum FriendRequestStatus
         {

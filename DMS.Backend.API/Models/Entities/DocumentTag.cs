@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Azure;
+using DMS.Backend.API.Models.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,9 +11,10 @@ namespace DMS.Backend.Models.Entities
 {
     public class DocumentTag 
     {
-        public Guid Id { get; set; }
-        public string TagName { get; set; } = string.Empty;
-        public Guid DocumentId { get; set; }
-        public Document Document { get; set; } = null!;
+            public Guid DocumentId { get; set; }
+            public Document Document { get; set; }
+            public Guid TagId { get; set; }
+            public Tag Tag { get; set; }
+
     }
 }
