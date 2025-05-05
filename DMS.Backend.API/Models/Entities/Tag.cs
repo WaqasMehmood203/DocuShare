@@ -8,7 +8,6 @@ namespace DMS.Backend.API.Models.Entities
             public string Name { get; set; }
 
             public ICollection<DocumentTag> DocumentTags { get; set; }
-
     }
 }
 
