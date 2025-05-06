@@ -9,7 +9,7 @@ using static DMS.Backend.Models.Enums;
 
 namespace DMS.Backend.Models.Entities
 {
-    public class Document : BaseModel
+    public class DocumentViewModel : BaseModel
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
@@ -17,8 +17,8 @@ namespace DMS.Backend.Models.Entities
         public Guid OwnerId { get; set; }
         public User Owner { get; set; }
         public DocumentVisibility Visibility { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public ICollection<DocumentTag> DocumentTags { get; set; }
+        public string Tags { get; set; }
+
         public ICollection<Like> Likes { get; set; } = new List<Like>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<DocumentShare> DocumentShares { get; set; } = new List<DocumentShare>();

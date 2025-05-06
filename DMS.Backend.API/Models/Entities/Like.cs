@@ -14,6 +14,6 @@ namespace DMS.Backend.Models.Entities
         public User User { get; set; } = null!;
 
         public Guid DocumentId { get; set; }
-        public Document Document { get; set; } = null!;
+        public DocumentViewModel Document { get; set; } = null!;
     }
 }

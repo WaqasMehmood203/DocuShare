@@ -1,5 +1,4 @@
-﻿using DMS.Backend.API.Models.Entities;
-using DMS.Backend.Models.Entities;
+﻿using DMS.Backend.Models.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,9 +10,8 @@ namespace DMS.Backend.Data
            : base(options)
         { }
 
-        public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentViewModel> Documents { get; set; }
         public DbSet<DocumentShare> DocumentShares { get; set; }
-        public DbSet<DocumentTag> DocumentTags { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
         public DbSet<Friend> Friends { get; set; }
         public DbSet<Notification> Notifications { get; set; }
@@ -21,7 +19,6 @@ namespace DMS.Backend.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ExternalStorage> ExternalStorages { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Tag> Tags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,15 +36,15 @@ namespace DMS.Backend.Data
                 .Ignore(n => n.UpdatedDate)
                 .Ignore(n => n.IsUpdated);
 
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<DocumentViewModel>()
                 .Property(d => d.UpdatedDate)
                 .IsRequired();
 
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<DocumentViewModel>()
                 .Property(d => d.IsUpdated)
                 .IsRequired();
 
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<DocumentViewModel>()
                     .HasMany(d => d.DocumentShares)
                     .WithOne(ds => ds.Document)
                     .HasForeignKey(ds => ds.DocumentId)

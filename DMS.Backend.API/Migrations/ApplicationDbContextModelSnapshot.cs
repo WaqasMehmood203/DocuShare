@@ -62,53 +62,6 @@ namespace DMS.Backend.API.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("DMS.Backend.Models.Entities.Document", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsUpdated")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("Documents");
-                });
-
             modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentShare", b =>
                 {
                     b.Property<Guid>("Id")
@@ -130,24 +83,51 @@ namespace DMS.Backend.API.Migrations
                     b.ToTable("DocumentShares");
                 });
 
-            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentTag", b =>
+            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentViewModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DocumentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TagName")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUpdated")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("OwnerId");
 
-                    b.ToTable("DocumentTags");
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.ExternalStorage", b =>
@@ -357,7 +337,7 @@ namespace DMS.Backend.API.Migrations
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.Comment", b =>
                 {
-                    b.HasOne("DMS.Backend.Models.Entities.Document", "Document")
+                    b.HasOne("DMS.Backend.Models.Entities.DocumentViewModel", "Document")
                         .WithMany("Comments")
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -374,7 +354,26 @@ namespace DMS.Backend.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DMS.Backend.Models.Entities.Document", b =>
+            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentShare", b =>
+                {
+                    b.HasOne("DMS.Backend.Models.Entities.DocumentViewModel", "Document")
+                        .WithMany("DocumentShares")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DMS.Backend.Models.Entities.User", "User")
+                        .WithMany("DocumentShares")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentViewModel", b =>
                 {
                     b.HasOne("DMS.Backend.Models.Entities.User", "Owner")
                         .WithMany("Documents")
@@ -383,36 +382,6 @@ namespace DMS.Backend.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentShare", b =>
-                {
-                    b.HasOne("DMS.Backend.Models.Entities.Document", "Document")
-                        .WithMany("DocumentShares")
-                        .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DMS.Backend.Models.Entities.User", "User")
-                        .WithMany("DocumentShares")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Document");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentTag", b =>
-                {
-                    b.HasOne("DMS.Backend.Models.Entities.Document", "Document")
-                        .WithMany("Tags")
-                        .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Document");
                 });
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.ExternalStorage", b =>
@@ -478,7 +447,7 @@ namespace DMS.Backend.API.Migrations
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.Like", b =>
                 {
-                    b.HasOne("DMS.Backend.Models.Entities.Document", "Document")
+                    b.HasOne("DMS.Backend.Models.Entities.DocumentViewModel", "Document")
                         .WithMany("Likes")
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -506,15 +475,13 @@ namespace DMS.Backend.API.Migrations
                     b.Navigation("Receiver");
                 });
 
-            modelBuilder.Entity("DMS.Backend.Models.Entities.Document", b =>
+            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentViewModel", b =>
                 {
                     b.Navigation("Comments");
 
                     b.Navigation("DocumentShares");
 
                     b.Navigation("Likes");
-
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.User", b =>

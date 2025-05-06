@@ -17,7 +17,7 @@ namespace DMS.Backend.Models.Entities
 
         public Guid DocumentId { get; set; }
 
-        public Document Document { get; set; } = null!;
+        public DocumentViewModel Document { get; set; } = null!;
         [Required]
         public string Content { get; set; } = string.Empty;
     }

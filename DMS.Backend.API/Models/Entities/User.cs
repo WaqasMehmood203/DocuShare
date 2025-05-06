@@ -47,7 +47,7 @@ namespace DMS.Backend.Models.Entities
         public ICollection<Friend> Friends { get; set; }
         public ICollection<FriendRequest> SentFriendRequests { get; set; }
         public ICollection<FriendRequest> ReceivedFriendRequests { get; set; }
-        public ICollection<Document> Documents { get; set; }
+        public ICollection<DocumentViewModel> Documents { get; set; }
         public ICollection<Like> Likes { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Notification> Notifications { get; set; }
