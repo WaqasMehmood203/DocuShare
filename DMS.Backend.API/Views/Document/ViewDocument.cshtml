@@ -1,0 +1,38 @@
+﻿@model DMS.Backend.Models.Entities.Document
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <h2>@Model.Title</h2>
+
+    <div class="mb-3">
+        <label><strong>Content:</strong></label>
+        <div class="border p-3" style="background-color:#f8f9fa">
+            @Html.Raw(Model.Content)
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Tags))
+    {
+        <p>
+            <strong>Tags:</strong>
+            @foreach (var tag in Model.Tags.Split(','))
+            {
+                <span class="badge bg-secondary me-1">@tag.Trim()</span>
+            }
+        </p>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.FilePath))
+    {
+        <p>
+            <strong>File:</strong>
+            <a href="~/@Model.FilePath" class="btn btn-sm btn-outline-primary" download>Download File</a>
+        </p>
+    }
+
+    <p><strong>Created:</strong> @Model.CreatedDate.ToString("g")</p>
+
+    <a href="@Url.Action("MyDocuments", "Document")" class="btn btn-secondary mt-3">Back</a>
+</div>
