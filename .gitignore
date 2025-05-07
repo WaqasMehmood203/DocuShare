@@ -361,3 +361,15 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.Designer.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.Designer.cs
+/DMS.Backend.API/Migrations/ApplicationDbContextModelSnapshot.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.Designer.cs
+/DMS.Backend.API/Migrations/ApplicationDbContextModelSnapshot.cs
+/DMS.Backend.API/Migrations/20250507185143_InitialMigration.cs
