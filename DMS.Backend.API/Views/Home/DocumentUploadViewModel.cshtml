@@ -1,0 +1,31 @@
+﻿@using DMS.Backend.Models
+using DMS
+@model DMS.Backend.Models.Entities.Document
+
+
+<form asp-action="Upload" enctype="multipart/form-data" method="post">
+    <div class="form-group">
+        <label>Title</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger" />
+    </div>
+
+    @* <div class="form-group">
+        <label>File</label>
+        <input asp-for="File" type="file" class="form-control" />
+        <span asp-validation-for="File" class="text-danger" />
+    </div> *@
+
+    <div class="form-group">
+        <label>Content</label>
+        <textarea asp-for="Content" class="form-control"></textarea>
+        <span asp-validation-for="Content" class="text-danger" />
+    </div>
+
+    <div class="form-group">
+        <label>Visibility</label>
+        <select asp-for="Visibility" asp-items="Html.GetEnumSelectList<Enums.DocumentVisibility>()" class="form-control"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

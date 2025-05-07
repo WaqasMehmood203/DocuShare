@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMS.Backend.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250501184002_InitialMigration")]
+    [Migration("20250507185143_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -94,6 +94,10 @@ namespace DMS.Backend.API.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -131,26 +135,6 @@ namespace DMS.Backend.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("DocumentShares");
-                });
-
-            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentTag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DocumentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TagName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentId");
-
-                    b.ToTable("DocumentTags");
                 });
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.ExternalStorage", b =>
@@ -407,17 +391,6 @@ namespace DMS.Backend.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DMS.Backend.Models.Entities.DocumentTag", b =>
-                {
-                    b.HasOne("DMS.Backend.Models.Entities.Document", "Document")
-                        .WithMany("Tags")
-                        .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Document");
-                });
-
             modelBuilder.Entity("DMS.Backend.Models.Entities.ExternalStorage", b =>
                 {
                     b.HasOne("DMS.Backend.Models.Entities.User", "User")
@@ -516,8 +489,6 @@ namespace DMS.Backend.API.Migrations
                     b.Navigation("DocumentShares");
 
                     b.Navigation("Likes");
-
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("DMS.Backend.Models.Entities.User", b =>

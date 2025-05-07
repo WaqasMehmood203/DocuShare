@@ -1,0 +1,32 @@
+﻿@model IEnumerable<DMS.Backend.Models.Entities.FriendRequest>
+
+@{
+    ViewData["Title"] = "Received Friend Requests";
+}
+
+<div class="container">
+    <div class="friend-box">
+        <h1>Received Friend Requests</h1>
+        @if (!Model.Any())
+        {
+            <p>No pending friend requests.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var request in Model)
+                {
+                    <li>
+                        <p>@request.Sender.FirstName @request.Sender.LastName</p>
+                        <form asp-action="Accept" method="post" asp-route-id="@request.Id" style="display:inline;">
+                            <button type="submit" class="Accept-btn">Accept ✔</button>
+                        </form>
+                        <form asp-action="Delete" method="post" asp-route-id="@request.Id" style="display:inline;">
+                            <button type="submit" class="remove-btn">Remove X</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

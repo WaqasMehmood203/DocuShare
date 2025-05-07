@@ -1,0 +1,40 @@
+﻿@model IEnumerable<DMS.Backend.Models.Entities.Document>
+
+@{
+    ViewData["Title"] = "My Documents";
+}
+
+<h2>My Documents</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Visibility</th>
+            <th>Tags</th>
+            <th>Download</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doc in Model)
+        {
+            <tr>
+                <td>@doc.Title</td>
+                <td>@doc.Content</td>
+                <td>@doc.Visibility</td>
+                <td>@doc.Tags</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(doc.FilePath))
+                    {
+                        <a href="@Url.Content($"~/{doc.FilePath}")" target="_blank">Download</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No file</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

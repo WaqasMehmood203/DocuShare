@@ -3,44 +3,64 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DMS.Backend.API</title>
+    <title>@ViewData["Title"] - DOCUSHARE</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DMS.Backend.API.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
-@*                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DMS.Backend.API</a>
- *@                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="logo">
+                        <img src="~/images/logo.png" alt="logo">
+                        <h1>DOCUSHARE</h1>
+                    </div>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="~/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="About">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Document" asp-action="Create">Upload</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Friend" asp-action="Index">Friend</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Notification" asp-action="Index">Notification</a></li>
                         <li class="nav-item">
-@*                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
- *@                        </li>
-                        <li class="nav-item">
-@*                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
- *@                        </li>
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                <ion-icon name="person-circle-outline"></ion-icon>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-@*         <div class="container">
-            &copy; 2025 - DMS.Backend.API - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div> *@
+    <main role="main" class="container">
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="footer-top">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="logo-wrapper">
+                    <img src="~/images/logo.png" alt="logo">
+                    <h2>DOCUSHARE</h2>
+                </div>
+                <div class="contact-us">
+                    <h2>Contact Us</h2>
+                    <p class="ph-no">Phone: 0346-1753318, 0306-7976695</p>
+                    <p>Email: waqasmehmood00203@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2025 All rights reserved to DOCUSHARE</p>
+        </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

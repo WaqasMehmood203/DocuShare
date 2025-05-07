@@ -9,10 +9,8 @@ namespace DMS.Backend.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
            : base(options)
         { }
-
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentShare> DocumentShares { get; set; }
-        public DbSet<DocumentTag> DocumentTags { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
         public DbSet<Friend> Friends { get; set; }
         public DbSet<Notification> Notifications { get; set; }

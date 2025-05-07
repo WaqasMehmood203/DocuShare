@@ -35,9 +35,9 @@ namespace DMS.Backend.API.Service.Services.Mapping
             CreateMap<DocumentShare, DocumentShareDto>().ReverseMap();
             CreateMap<DocumentShare, UpdateDocumentShareDto>().ReverseMap();
 
-            // DocumentTag mappings
-            CreateMap<DocumentTag, DocumentTagDto>().ReverseMap();
-            CreateMap<DocumentTag, UpdateDocumentTagDto>().ReverseMap();
+
+            //CreateMap<DocumentTag, DocumentTagDto>().ReverseMap();
+            //CreateMap<DocumentTag, UpdateDocumentTagDto>().ReverseMap();
 
             // ExternalStorage mappings
             CreateMap<ExternalStorage, ExternalStorageDto>().ReverseMap();
@@ -63,7 +63,7 @@ namespace DMS.Backend.API.Service.Services.Mapping
             CreateMap<CommentParametersDto, Comment>().ReverseMap();
             CreateMap<DocumentParametersDto, Document>().ReverseMap();
             CreateMap<DocumentShareParametersDto, DocumentShare>().ReverseMap();
-            CreateMap<DocumentTagParametersDto, DocumentTag>().ReverseMap();
+            //CreateMap<DocumentTagParametersDto, DocumentTag>().ReverseMap();
             CreateMap<ExternalStorageParametersDto, ExternalStorage>().ReverseMap();
             CreateMap<FriendParametersDto, Friend>().ReverseMap();
             CreateMap<FriendRequestParametersDto, FriendRequest>().ReverseMap();

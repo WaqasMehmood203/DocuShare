@@ -38,10 +38,11 @@ namespace DMS.Backend.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Visibility = table.Column<int>(type: "int", nullable: false),
+                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     IsUpdated = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -235,25 +236,6 @@ namespace DMS.Backend.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DocumentTags",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DocumentTags", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DocumentTags_Documents_DocumentId",
-                        column: x => x.DocumentId,
-                        principalTable: "Documents",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
@@ -302,11 +284,6 @@ namespace DMS.Backend.API.Migrations
                 name: "IX_DocumentShares_UserId",
                 table: "DocumentShares",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DocumentTags_DocumentId",
-                table: "DocumentTags",
-                column: "DocumentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExternalStorages_UserId",
@@ -378,9 +355,6 @@ namespace DMS.Backend.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "DocumentShares");
-
-            migrationBuilder.DropTable(
-                name: "DocumentTags");
 
             migrationBuilder.DropTable(
                 name: "ExternalStorages");

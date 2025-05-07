@@ -4,6 +4,7 @@ using DMS.Backend.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 namespace DMS.Backend.API.Controllers
 {
     public class HomeController : Controller
@@ -19,7 +20,6 @@ namespace DMS.Backend.API.Controllers
         {
             return View();
         }
-
         public IActionResult Login()
         {
             if (HttpContext.Session.GetString("UserSession") != null)
@@ -32,17 +32,24 @@ namespace DMS.Backend.API.Controllers
         [HttpPost]
         public IActionResult Login(User user)
         {
-            var myUser = _context.Users.Where(x =>  x.Email == user.Email && x.Password == user.Password).FirstOrDefault();
+            var myUser = _context.Users
+       .Where(x => x.Email == user.Email && x.Password == user.Password)
+       .FirstOrDefault();
+
             if (myUser != null)
             {
-                HttpContext.Session.SetString("UserSession",myUser.Email );
-                return RedirectToAction("Homepage");
+                HttpContext.Session.SetString("UserSession", myUser.Email);
+                HttpContext.Session.SetString("UserId", myUser.Id.ToString()); // Store User ID
+                //return RedirectToAction("Homepage");
+                return RedirectToAction("Index", "Friend");
+
+
             }
             else
             {
                 ViewBag.Message = "Login Failed..";
+                return View();
             }
-            return View();
         }
         
         public IActionResult Homepage()
@@ -81,19 +88,18 @@ namespace DMS.Backend.API.Controllers
                 ModelState.AddModelError(nameof(user.Email), "That email is already registered.");
                 return View(user);
             }
+
             if (!ModelState.IsValid)
             {
+
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Registered Successfully";
                 return RedirectToAction("Login");
-
             }
 
             return View();
         }
-
-
 
         public IActionResult Privacy()
         {
