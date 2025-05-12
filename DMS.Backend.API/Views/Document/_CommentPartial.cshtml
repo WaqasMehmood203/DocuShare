@@ -1,0 +1,37 @@
+﻿@model DMS.Backend.Models.Entities.Comment
+
+<div class="comment mb-3" style="margin-left: @(Model.ParentCommentId == null ? 0 : 20)px;">
+    <div class="list-group-item">
+        <p><strong>@Model.User.FirstName @Model.User.LastName</strong> (@Model.CreatedDate.ToString("MMM dd, yyyy HH:mm"))</p>
+        <p>@Html.Raw(Model.Content)</p>
+        @{
+            var userIdStr = Context.Session.GetString("UserId");
+            if (!string.IsNullOrEmpty(userIdStr))
+            {
+                <button class="btn btn-sm btn-link reply-btn" data-comment-id="@Model.Id" onclick="toggleReplyForm('@Model.Id')">Reply</button>
+                <div id="reply-form-@Model.Id" class="reply-form mt-2" style="display: none;">
+                    <form asp-controller="Document" asp-action="AddComment" method="post">
+                        <input type="hidden" name="documentId" value="@Model.DocumentId" />
+                        <input type="hidden" name="parentCommentId" value="@Model.Id" />
+                        <div class="form-group">
+                            <textarea name="content" class="form-control" rows="3" placeholder="Write your reply..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">Post Reply</button>
+                        <button type="button" class="btn btn-secondary btn-sm mt-2 ms-2" onclick="toggleReplyForm('@Model.Id')">Cancel</button>
+                    </form>
+                </div>
+                <!-- Temporary debug: Remove after confirming form renders -->
+                // <div class="debug-form" style="color: red;">Debug: Form ID = reply-form-@Model.Id</div>
+            }
+        }
+    </div>
+    @if (Model.Replies != null && Model.Replies.Any())
+    {
+        <div class="replies">
+            @foreach (var reply in Model.Replies.OrderBy(r => r.CreatedDate))
+            {
+                @await Html.PartialAsync("_CommentPartial", reply)
+            }
+        </div>
+    }
+</div>

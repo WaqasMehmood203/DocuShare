@@ -1,6 +1,8 @@
 ﻿@model DMS.Backend.Models.Entities.Document
+
 @{
     ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4">
@@ -34,5 +36,81 @@
 
     <p><strong>Created:</strong> @Model.CreatedDate.ToString("g")</p>
 
-    <a href="@Url.Action("MyDocuments", "Document")" class="btn btn-secondary mt-3">Back</a>
+    <!-- Comments Section -->
+    <h3 class="mt-4">Comments</h3>
+    @if (Model.Comments == null || !Model.Comments.Any())
+    {
+        <p>No comments yet. Be the first to comment!</p>
+    }
+    else
+    {
+        <div class="comments mb-4">
+            @foreach (var comment in Model.Comments.Where(c => c.ParentCommentId == null).OrderBy(c => c.CreatedDate))
+            {
+                @await Html.PartialAsync("_CommentPartial", comment)
+            }
+        </div>
+    }
+
+    <!-- Add Top-Level Comment Form -->
+    @{
+        var userIdStr = Context.Session.GetString("UserId");
+        if (!string.IsNullOrEmpty(userIdStr))
+        {
+            <h4>Add a Comment</h4>
+            <form asp-action="AddComment" method="post">
+                <input type="hidden" name="documentId" value="@Model.Id" />
+                <div class="form-group">
+                    <textarea name="content" class="form-control" rows="4" placeholder="Write your comment..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+            </form>
+        }
+        else
+        {
+            <p><a asp-controller="Home" asp-action="Login">Log in</a> to add a comment.</p>
+        }
+    }
+
+    <a asp-action="MyDocuments" asp-controller="Document" class="btn btn-secondary mt-3">Back to My Documents</a>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary mt-3">Back to Home</a>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleReplyForm(commentId) {
+            try {
+                console.log(`Toggling reply form for commentId: ${commentId}`);
+
+                // Hide all other reply forms
+                document.querySelectorAll('.reply-form').forEach(form => {
+                    form.style.display = 'none';
+                });
+
+                // Toggle the target form
+                const form = document.getElementById(`reply-form-${commentId}`);
+                if (form) {
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                    console.log(`Form display set to: ${form.style.display}`);
+                } else {
+                    console.error(`Reply form with ID reply-form-${commentId} not found`);
+                }
+            } catch (error) {
+                console.error('Error in toggleReplyForm:', error);
+            }
+        }
+
+        // Attach event listeners to reply buttons
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Attaching event listeners to reply buttons');
+            document.querySelectorAll('.reply-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const commentId = this.getAttribute('data-comment-id');
+                    console.log(`Reply button clicked for commentId: ${commentId}`);
+                    toggleReplyForm(commentId);
+                });
+            });
+        });
+    </script>
+}
