@@ -83,6 +83,7 @@ namespace DMS.Backend.API.Controllers
 
             return RedirectToAction("Homepage", "Home");
         }
+
         public async Task<IActionResult> MyDocuments()
         {
             var userIdStr = HttpContext.Session.GetString("UserId");
@@ -281,4 +282,4 @@ namespace DMS.Backend.API.Controllers
         }
     }
 }
-        #endregion
+#endregion

@@ -1,53 +1,5 @@
 ﻿
 
-
-<!-- #endregion -->
-@* @model DMS.Backend.Models.Entities.Document
-@{
-    ViewBag.Title = "Post a Document";
-}
-
-<h2>Post a Document</h2>
-
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" required />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Content"></label>
-        <textarea asp-for="Content" class="form-control" rows="5" required></textarea>
-        <span asp-validation-for="Content" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Visibility"></label>
-        <select asp-for="Visibility" class="form-control" asp-items="@(ViewBag.VisibilityOptions as List<SelectListItem>)">
-            <option value="">-- Select Visibility --</option>
-        </select>
-        <span asp-validation-for="Visibility" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Tags">Tags (comma-separated)</label>
-        <input asp-for="Tags" class="form-control" placeholder="e.g. project, report, design" />
-        <span asp-validation-for="Tags" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label>Upload File (optional)</label>
-        <input type="file" name="uploadedFile" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-success">Post</button>
-</form>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-*@
  @model DMS.Backend.Models.Entities.Document
 
 @{

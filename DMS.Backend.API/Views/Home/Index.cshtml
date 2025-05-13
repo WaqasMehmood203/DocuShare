@@ -1,4 +1,7 @@
-﻿@*  @model IEnumerable<DMS.Backend.Models.Entities.Document>
+﻿@model IEnumerable<DMS.Backend.Models.Entities.Document>
+@using DMS.Backend.Models
+@using DMS.Backend.Models.Entities
+@using static DMS.Backend.Models.Enums
 
 @{
     ViewData["Title"] = "Home - DOCUSHARE";
@@ -7,7 +10,56 @@
 
 <div class="container mt-4">
     <h2 class="mb-4">Document Feed</h2>
+    <a asp-controller="Home" asp-action="Logout" class="btn btn-outline-secondary mb-3">Logout</a>
+    <a asp-controller="Document" asp-action="Create" class="btn btn-primary mb-3">Upload New Document</a>
 
+    <!-- Search, Filter, and Sort Form -->
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="row align-items-end">
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Search by Title</label>
+                <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Search by title..." />
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Filter by Visibility</label>
+                <select name="visibilityFilter" class="form-control">
+                    <option value="">All Visibilities</option>
+                    @foreach (var visibility in Enum.GetValues(typeof(Enums.DocumentVisibility)))
+                    {
+                        <option value="@visibility" selected="@(ViewBag.VisibilityFilter == visibility.ToString() ? "selected" : null)">@visibility</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Sort By</label>
+                <div class="d-flex align-items-center">
+                    <select name="sortBy" class="form-control me-3">
+                        <option value="title" selected="@(ViewBag.SortBy == "title" ? "selected" : null)">Title</option>
+                        <option value="owner" selected="@(ViewBag.SortBy == "owner" ? "selected" : null)">Owner</option>
+                        <option value="visibility" selected="@(ViewBag.SortBy == "visibility" ? "selected" : null)">Visibility</option>
+                        <option value="createddate" selected="@(ViewBag.SortBy == "createddate" ? "selected" : null)">Created Date</option>
+                    </select>
+                    <button type="submit" name="sortOrder" value="asc" class="btn btn-outline-primary me-2 @(ViewBag.SortOrder == "asc" ? "active" : "")" title="Sort Ascending">↑</button>
+                    <button type="submit" name="sortOrder" value="desc" class="btn btn-outline-primary @(ViewBag.SortOrder == "desc" ? "active" : "")" title="Sort Descending">↓</button>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button type="submit" class="btn btn-primary me-2">Apply</button>
+                <a asp-action="Index" class="btn btn-secondary">Clear</a>
+            </div>
+        </div>
+        <input type="hidden" name="page" value="@ViewBag.CurrentPage" />
+    </form>
+
+    <!-- Error Message -->
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            <strong>Error:</strong> @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <!-- Document Table -->
     @if (!Model.Any())
     {
         <p>No documents to display. Upload a document or connect with friends!</p>
@@ -29,7 +81,7 @@
                 {
                     <tr>
                         <td>@doc.Title</td>
-                        <td>@doc.Owner.FirstName @doc.Owner.LastName</td>
+                        <td>@doc.Owner?.FirstName @doc.Owner?.LastName</td>
                         <td>@doc.Visibility</td>
                         <td>@doc.CreatedDate.ToString("MMM dd, yyyy")</td>
                         <td>
@@ -49,157 +101,24 @@
                 }
             </tbody>
         </table>
-    }
-</div>
 
-@section Scripts {
-    <script>
-        function toggleView(id) {
-            const row = document.getElementById('viewSection-' + id);
-            const isVisible = row?.style.display !== 'none';
-
-            // Hide all other expanded rows
-            document.querySelectorAll('tr[id^="viewSection-"]').forEach(r => r.style.display = 'none');
-
-            // Toggle current row
-            if (row) {
-                row.style.display = isVisible ? 'none' : '';
-            }
-        }
-    </script>
-} *@
-@* @model DMS.Backend.API.Models.Entities.PagedResult<DMS.Backend.Models.Entities.Document *@
-    @model DMS.Backend.Models.Entities.PagedResult<DMS.Backend.Models.Entities.Document>
-@using DMS.Backend.Models.Entities
-@using static DMS.Backend.Models.Enums
-
-@{
-    ViewData["Title"] = "Home - Your and Shared Documents";
-    var parameters = ViewData["QueryParameters"] as DMS.Backend.Models.Entities.QueryParameters;
-}
-
-<div class="container mt-4">
-    <h2>Home - Your and Shared Documents</h2>
-    <a asp-controller="Home" asp-action="Logout" class="btn btn-outline-secondary mb-3">Logout</a>
-
-    <!-- Search, Filter, and Sort Form -->
-    <form asp-action="Index" method="get" class="mb-4">
-        <div class="row">
-            <!-- Search -->
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="SearchString">Search</label>
-                    <input type="text" name="SearchString" class="form-control" value="@parameters.SearchString" placeholder="Search by title or content" />
-                </div>
-            </div>
-            <!-- Visibility Filter -->
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="Visibility">Visibility</label>
-                    <select name="Visibility" class="form-control">
-                        <option value="">All</option>
-                        <option value="Public" selected="@(parameters.Visibility == "Public")">Public</option>
-                        <option value="Private" selected="@(parameters.Visibility == "Private")">Private</option>
-                        <option value="Friends" selected="@(parameters.Visibility == "Friends")">Friends</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Tags Filter -->
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="Tags">Tags</label>
-                    <input type="text" name="Tags" class="form-control" value="@parameters.Tags" placeholder="e.g., tag1, tag2" />
-                </div>
-            </div>
-            <!-- Sort -->
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label for="SortBy">Sort By</label>
-                    <select name="SortBy" class="form-control">
-                        <option value="CreatedDate" selected="@(parameters.SortBy == "CreatedDate")">Created Date</option>
-                        <option value="Title" selected="@(parameters.SortBy == "Title")">Title</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label for="SortOrder">Order</label>
-                    <select name="SortOrder" class="form-control">
-                        <option value="desc" selected="@(parameters.SortOrder == "desc")">Descending</option>
-                        <option value="asc" selected="@(parameters.SortOrder == "asc")">Ascending</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Submit -->
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary">Apply</button>
-            </div>
-        </div>
-        <!-- Hidden fields for pagination -->
-        <input type="hidden" name="PageNumber" value="1" />
-        <input type="hidden" name="PageSize" value="@parameters.PageSize" />
-    </form>
-
-    <!-- Document Table -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Uploaded By</th>
-                <th>Visibility</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Items == null || !Model.Items.Any())
-            {
-                <tr>
-                    <td colspan="4">No documents found.</td>
-                </tr>
-            }
-            else
-            {
-                @foreach (var doc in Model.Items)
-                {
-                    <tr>
-                        <td>@doc.Title</td>
-                        <td>@doc.Owner.FirstName @doc.Owner.LastName</td>
-                        <td>@doc.Visibility</td>
-                        <td>
-                            <a class="btn btn-primary btn-sm" href="@Url.Action("Download", "Document", new { id = doc.Id })">Download</a>
-                            <a class="btn btn-outline-primary btn-sm" asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.Id">View</a>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-
-    <!-- Pagination Controls -->
-    @if (Model.Items != null && Model.Items.Any())
-    {
+        <!-- Pagination -->
         <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <!-- Previous -->
-                <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@parameters.SearchString" asp-route-Visibility="@parameters.Visibility" asp-route-Tags="@parameters.Tags" asp-route-SortBy="@parameters.SortBy" asp-route-SortOrder="@parameters.SortOrder">Previous</a>
+            <ul class="pagination">
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-visibilityFilter="@ViewBag.VisibilityFilter" asp-route-sortBy="@ViewBag.SortBy" asp-route-sortOrder="@ViewBag.SortOrder">Previous</a>
                 </li>
-                <!-- Page Numbers -->
-                @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+                @for (var i = 1; i <= ViewBag.TotalPages; i++)
                 {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@parameters.SearchString" asp-route-Visibility="@parameters.Visibility" asp-route-Tags="@parameters.Tags" asp-route-SortBy="@parameters.SortBy" asp-route-SortOrder="@parameters.SortOrder">@i</a>
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.SearchString" asp-route-visibilityFilter="@ViewBag.VisibilityFilter" asp-route-sortBy="@ViewBag.SortBy" asp-route-sortOrder="@ViewBag.SortOrder">@i</a>
                     </li>
                 }
-                <!-- Next -->
-                <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@parameters.SearchString" asp-route-Visibility="@parameters.Visibility" asp-route-Tags="@parameters.Tags" asp-route-SortBy="@parameters.SortBy" asp-route-SortOrder="@parameters.SortOrder">Next</a>
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-visibilityFilter="@ViewBag.VisibilityFilter" asp-route-sortBy="@ViewBag.SortBy" asp-route-sortOrder="@ViewBag.SortOrder">Next</a>
                 </li>
             </ul>
         </nav>
-        <p>Showing @(Model.Items.Count) of @Model.TotalCount documents (Page @Model.PageNumber of @Model.TotalPages)</p>
     }
 </div>
 
