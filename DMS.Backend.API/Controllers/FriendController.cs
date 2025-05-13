@@ -14,6 +14,8 @@ namespace DMS.Backend.API.Controllers
         {
             _context = context;
         }
+
+        #region Index
         public async Task<IActionResult> Index(string searchString)
         {
             var userId = GetCurrentUserId();
@@ -39,7 +41,6 @@ namespace DMS.Backend.API.Controllers
                 var searchResults = await users.ToListAsync();
                 ViewBag.SearchResults = searchResults;
 
-                // Get friend IDs to check if users are already friends
                 var friendIds = await _context.Friends
                     .Where(f => f.UserId == userId || f.FriendId == userId)
                     .Select(f => f.UserId == userId ? f.FriendId : f.UserId)
@@ -49,7 +50,6 @@ namespace DMS.Backend.API.Controllers
             }
             else
             {
-                // No search string, show friends as before
                 var friendIds = await _context.Friends
                     .Where(f => f.UserId == userId)
                     .Select(f => f.FriendId)
@@ -63,6 +63,9 @@ namespace DMS.Backend.API.Controllers
 
             return View();
         }
+        #endregion
+
+        #region Send Friend Request
         [HttpPost]
         public async Task<IActionResult> SendFriendRequest(Guid receiverId)
         {
@@ -102,5 +105,6 @@ namespace DMS.Backend.API.Controllers
             }
             return Guid.Parse(userIdString);
         }
+        #endregion
     }
 }

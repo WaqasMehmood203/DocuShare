@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DMS.Backend.Models.Entities.Document>
+﻿@*  @model IEnumerable<DMS.Backend.Models.Entities.Document>
 
 @{
     ViewData["Title"] = "Home - DOCUSHARE";
@@ -67,4 +67,142 @@
             }
         }
     </script>
+} *@
+@* @model DMS.Backend.API.Models.Entities.PagedResult<DMS.Backend.Models.Entities.Document *@
+    @model DMS.Backend.Models.Entities.PagedResult<DMS.Backend.Models.Entities.Document>
+@using DMS.Backend.Models.Entities
+@using static DMS.Backend.Models.Enums
+
+@{
+    ViewData["Title"] = "Home - Your and Shared Documents";
+    var parameters = ViewData["QueryParameters"] as DMS.Backend.Models.Entities.QueryParameters;
+}
+
+<div class="container mt-4">
+    <h2>Home - Your and Shared Documents</h2>
+    <a asp-controller="Home" asp-action="Logout" class="btn btn-outline-secondary mb-3">Logout</a>
+
+    <!-- Search, Filter, and Sort Form -->
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="row">
+            <!-- Search -->
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="SearchString">Search</label>
+                    <input type="text" name="SearchString" class="form-control" value="@parameters.SearchString" placeholder="Search by title or content" />
+                </div>
+            </div>
+            <!-- Visibility Filter -->
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="Visibility">Visibility</label>
+                    <select name="Visibility" class="form-control">
+                        <option value="">All</option>
+                        <option value="Public" selected="@(parameters.Visibility == "Public")">Public</option>
+                        <option value="Private" selected="@(parameters.Visibility == "Private")">Private</option>
+                        <option value="Friends" selected="@(parameters.Visibility == "Friends")">Friends</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Tags Filter -->
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="Tags">Tags</label>
+                    <input type="text" name="Tags" class="form-control" value="@parameters.Tags" placeholder="e.g., tag1, tag2" />
+                </div>
+            </div>
+            <!-- Sort -->
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="SortBy">Sort By</label>
+                    <select name="SortBy" class="form-control">
+                        <option value="CreatedDate" selected="@(parameters.SortBy == "CreatedDate")">Created Date</option>
+                        <option value="Title" selected="@(parameters.SortBy == "Title")">Title</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="SortOrder">Order</label>
+                    <select name="SortOrder" class="form-control">
+                        <option value="desc" selected="@(parameters.SortOrder == "desc")">Descending</option>
+                        <option value="asc" selected="@(parameters.SortOrder == "asc")">Ascending</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Submit -->
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+        <!-- Hidden fields for pagination -->
+        <input type="hidden" name="PageNumber" value="1" />
+        <input type="hidden" name="PageSize" value="@parameters.PageSize" />
+    </form>
+
+    <!-- Document Table -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Uploaded By</th>
+                <th>Visibility</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items == null || !Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="4">No documents found.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var doc in Model.Items)
+                {
+                    <tr>
+                        <td>@doc.Title</td>
+                        <td>@doc.Owner.FirstName @doc.Owner.LastName</td>
+                        <td>@doc.Visibility</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" href="@Url.Action("Download", "Document", new { id = doc.Id })">Download</a>
+                            <a class="btn btn-outline-primary btn-sm" asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.Id">View</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    @if (Model.Items != null && Model.Items.Any())
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <!-- Previous -->
+                <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@parameters.SearchString" asp-route-Visibility="@parameters.Visibility" asp-route-Tags="@parameters.Tags" asp-route-SortBy="@parameters.SortBy" asp-route-SortOrder="@parameters.SortOrder">Previous</a>
+                </li>
+                <!-- Page Numbers -->
+                @for (var i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@parameters.SearchString" asp-route-Visibility="@parameters.Visibility" asp-route-Tags="@parameters.Tags" asp-route-SortBy="@parameters.SortBy" asp-route-SortOrder="@parameters.SortOrder">@i</a>
+                    </li>
+                }
+                <!-- Next -->
+                <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@parameters.SearchString" asp-route-Visibility="@parameters.Visibility" asp-route-Tags="@parameters.Tags" asp-route-SortBy="@parameters.SortBy" asp-route-SortOrder="@parameters.SortOrder">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <p>Showing @(Model.Items.Count) of @Model.TotalCount documents (Page @Model.PageNumber of @Model.TotalPages)</p>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

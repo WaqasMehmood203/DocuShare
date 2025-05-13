@@ -15,6 +15,7 @@ namespace DMS.Backend.API.Controllers
             _context = context;
         }
 
+        #region Index
         public async Task<IActionResult> Index()
         {
             var userId = GetCurrentUserId();
@@ -51,6 +52,18 @@ namespace DMS.Backend.API.Controllers
             }
             return RedirectToAction("Index");
         }
+        #endregion
+
+        #region Delete
+        private Guid GetCurrentUserId()
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            {
+                return Guid.Empty;
+            }
+            return userId;
+        }
 
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
@@ -70,14 +83,6 @@ namespace DMS.Backend.API.Controllers
             return RedirectToAction("Index");
         }
 
-        private Guid GetCurrentUserId()
-        {
-            var userIdString = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-            {
-                return Guid.Empty;
-            }
-            return userId;
-        }
+        #endregion
     }
 }

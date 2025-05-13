@@ -10,28 +10,42 @@
 
     <div class="mb-3">
         <label><strong>Content:</strong></label>
-        <div class="border p-3" style="background-color:#f8f9fa">
+        <div class="border p-3" style="background-color:#f8f9fa" id="document-content">
             @Html.Raw(Model.Content)
         </div>
     </div>
 
+    <!-- SEO Analysis Section -->
+    <div class="mt-5">
+        <h4>🧠 Advanced SEO Analysis</h4>
+
+        <div class="mb-3">
+            <label for="primary-keyword"><strong>Primary Keyword:</strong></label>
+            <input type="text" id="primary-keyword" class="form-control" placeholder="e.g. digital transformation" />
+        </div>
+
+        <button class="btn btn-success mb-3" onclick="runSeoAudit()">Run SEO Audit</button>
+
+        <ul id="advanced-seo-feedback" class="list-group"></ul>
+    </div>
+
     @if (!string.IsNullOrEmpty(Model.Tags))
     {
-        <p>
-            <strong>Tags:</strong>
+            <p>
+                <strong>Tags:</strong>
             @foreach (var tag in Model.Tags.Split(','))
             {
-                <span class="badge bg-secondary me-1">@tag.Trim()</span>
+                        <span class="badge bg-secondary me-1">@tag.Trim()</span>
             }
-        </p>
+            </p>
     }
 
     @if (!string.IsNullOrEmpty(Model.FilePath))
     {
-        <p>
-            <strong>File:</strong>
-            <a href="~/@Model.FilePath" class="btn btn-sm btn-outline-primary" download>Download File</a>
-        </p>
+            <p>
+                <strong>File:</strong>
+                <a href="~/@Model.FilePath" class="btn btn-sm btn-outline-primary" download>Download File</a>
+            </p>
     }
 
     <p><strong>Created:</strong> @Model.CreatedDate.ToString("g")</p>
@@ -40,16 +54,16 @@
     <h3 class="mt-4">Comments</h3>
     @if (Model.Comments == null || !Model.Comments.Any())
     {
-        <p>No comments yet. Be the first to comment!</p>
+            <p>No comments yet. Be the first to comment!</p>
     }
     else
     {
-        <div class="comments mb-4">
+            <div class="comments mb-4">
             @foreach (var comment in Model.Comments.Where(c => c.ParentCommentId == null).OrderBy(c => c.CreatedDate))
             {
                 @await Html.PartialAsync("_CommentPartial", comment)
             }
-        </div>
+            </div>
     }
 
     <!-- Add Top-Level Comment Form -->
@@ -57,18 +71,18 @@
         var userIdStr = Context.Session.GetString("UserId");
         if (!string.IsNullOrEmpty(userIdStr))
         {
-            <h4>Add a Comment</h4>
-            <form asp-action="AddComment" method="post">
-                <input type="hidden" name="documentId" value="@Model.Id" />
-                <div class="form-group">
-                    <textarea name="content" class="form-control" rows="4" placeholder="Write your comment..." required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
-            </form>
+                    <h4>Add a Comment</h4>
+                    <form asp-action="AddComment" method="post">
+                        <input type="hidden" name="documentId" value="@Model.Id" />
+                        <div class="form-group">
+                            <textarea name="content" class="form-control" rows="4" placeholder="Write your comment..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+                    </form>
         }
         else
         {
-            <p><a asp-controller="Home" asp-action="Login">Log in</a> to add a comment.</p>
+                    <p><a asp-controller="Home" asp-action="Login">Log in</a> to add a comment.</p>
         }
     }
 
@@ -77,18 +91,69 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        function toggleReplyForm(commentId) {
+        <script>
+            function runSeoAudit() {
+                const keyword = document.getElementById("primary-keyword").value.toLowerCase().trim();
+                const content = document.getElementById("document-content").innerText;
+                const lowerContent = content.toLowerCase();
+                const words = lowerContent.split(/\s+/).filter(w => w);
+                const wordCount = words.length;
+                const lines = content.split('\n');
+                const firstParagraph = lines[0] || '';
+                const feedback = [];
+
+                if (!keyword) {
+                    feedback.push(`<li class="list-group-item list-group-item-warning">⚠️ Please enter a primary keyword.</li>`);
+                    document.getElementById("advanced-seo-feedback").innerHTML = feedback.join("");
+                    return;
+                }
+
+                // Keyword in Content
+                const keywordMatches = words.filter(w => w.includes(keyword)).length;
+                const keywordDensity = ((keywordMatches / wordCount) * 100).toFixed(2);
+                const keywordDensityStatus = keywordDensity >= 1 && keywordDensity <= 2.5
+                    ? "list-group-item-success"
+                    : "list-group-item-danger";
+                feedback.push(`<li class="list-group-item ${keywordDensityStatus}">🔑 Keyword Density: ${keywordDensity}% (Ideal: 1–2.5%)</li>`);
+
+                // Keyword in First Paragraph
+                const keywordInFirst = firstParagraph.toLowerCase().includes(keyword);
+                feedback.push(`<li class="list-group-item ${keywordInFirst ? 'list-group-item-success' : 'list-group-item-danger'}">
+                    ${keywordInFirst ? '✅' : '❌'} Keyword ${keywordInFirst ? 'found' : 'not found'} in the first paragraph.</li>`);
+
+                // Keyword in Title
+                const title = "@Model.Title".toLowerCase();
+                const keywordInTitle = title.includes(keyword);
+                feedback.push(`<li class="list-group-item ${keywordInTitle ? 'list-group-item-success' : 'list-group-item-danger'}">
+                    ${keywordInTitle ? '✅' : '❌'} Keyword ${keywordInTitle ? 'present' : 'missing'} in the title.</li>`);
+
+                // Passive Voice
+                const passiveMatches = content.match(/\b(is|are|was|were|be|been|being)\b\s+\w+ed\b/gi) || [];
+                const passiveRatio = ((passiveMatches.length / wordCount) * 100).toFixed(2);
+                const passiveStatus = passiveRatio <= 10 ? "list-group-item-success" : "list-group-item-danger";
+                feedback.push(`<li class="list-group-item ${passiveStatus}">📉 Passive Voice Usage: ${passiveRatio}% (Ideal: &lt;10%)</li>`);
+
+                // Transition Words
+                const transitionWords = ["however", "therefore", "moreover", "furthermore", "in addition", "as a result", "for example"];
+                const transitionMatches = lowerContent.match(new RegExp(`\\b(${transitionWords.join('|')})\\b`, 'gi')) || [];
+                const transitionRatio = ((transitionMatches.length / wordCount) * 100).toFixed(2);
+                const transitionStatus = transitionRatio >= 25 ? "list-group-item-success" : "list-group-item-warning";
+                feedback.push(`<li class="list-group-item ${transitionStatus}">🔗 Transition Words: ${transitionRatio}% (Target: 25%+)</li>`);
+
+                // Word Count
+                const wordCountStatus = wordCount >= 300 ? "list-group-item-success" : "list-group-item-warning";
+                feedback.push(`<li class="list-group-item ${wordCountStatus}">✍️ Word Count: ${wordCount} (Recommended: 300+ for SEO)</li>`);
+
+                // Show feedback
+                document.getElementById("advanced-seo-feedback").innerHTML = feedback.join("");
+            }
+
+            function toggleReplyForm(commentId) {
             try {
                 console.log(`Toggling reply form for commentId: ${commentId}`);
-
-                // Hide all other reply forms
                 document.querySelectorAll('.reply-form').forEach(form => {
                     form.style.display = 'none';
                 });
-
-                // Toggle the target form
                 const form = document.getElementById(`reply-form-${commentId}`);
                 if (form) {
                     form.style.display = form.style.display === 'none' ? 'block' : 'none';
@@ -101,7 +166,6 @@
             }
         }
 
-        // Attach event listeners to reply buttons
         document.addEventListener('DOMContentLoaded', function () {
             console.log('Attaching event listeners to reply buttons');
             document.querySelectorAll('.reply-btn').forEach(button => {
@@ -112,5 +176,5 @@
                 });
             });
         });
-    </script>
+        </script>
 }

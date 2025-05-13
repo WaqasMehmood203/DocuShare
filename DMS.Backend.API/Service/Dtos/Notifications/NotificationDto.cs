@@ -1,4 +1,5 @@
-﻿using DMS.Backend.Models;
+﻿using DMS.Backend.API.Models;
+using DMS.Backend.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace DMS.Backend.API.Service.Dtos.Notifications
