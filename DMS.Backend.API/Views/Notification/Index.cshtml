@@ -13,22 +13,6 @@
     <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="../images/logo.png" alt="logo">
-            <h1>DOCUSHARE</h1>
-        </div>
-        <div class="login-btn">
-            <ul>
-                <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                <li><a href="@Url.Action("About", "Home")">About Us</a></li>
-                <li><a href="@Url.Action("Create", "Document")">Upload</a></li>
-                <li><a href="@Url.Action("Index", "Friend")">Friend</a></li>
-                <li><a href="@Url.Action("Index", "Notification")">Notification</a></li>
-                <li><a href="@Url.Action("Login", "Home")"><ion-icon name="person-circle-outline" class="login-icon"></ion-icon></a></li>
-            </ul>
-        </div>
-    </header>
 
     <div class="container">
         <div class="list-box">
@@ -40,8 +24,8 @@
                     {
                         <li>
                             <p>@notification.Message</p>
-                            <form asp-action="MarkAsRead" asp-route-id="@notification.Id" method="post" style="display:inline;">
-                                <button type="submit" class="mark-read-btn">Mark as Read</button>
+                            <form asp-action="Delete" asp-route-id="@notification.Id" method="post" style="display:inline;">
+                                <button type="submit" class="Delete-btn">Delete</button>
                             </form>
                         </li>
                     }

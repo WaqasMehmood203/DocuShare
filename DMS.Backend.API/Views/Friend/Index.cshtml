@@ -20,6 +20,10 @@
                 {
                     <li>
                         <p>@friend.FirstName @friend.LastName</p>
+                        <form asp-action="RemoveFriend" method="post">
+                            <input type="hidden" name="friendId" value="@friend.Id" />
+                            <button type="submit" class="remove-btn">Remove</button>
+                        </form>
                     </li>
                 }
             </ul>
@@ -36,12 +40,12 @@
                         {
                             <form asp-action="SendFriendRequest" method="post">
                                 <input type="hidden" name="receiverId" value="@user.Id" />
-                                <button type="submit">Send Friend Request</button>
+                                <button type="submit" class="frndBtn">Send Friend Request</button>
                             </form>
                         }
                         else
                         {
-                            <p>Already Friends</p>
+                            <p class="status">Already Friends</p>
                         }
                     </li>
                 }

@@ -10,8 +10,10 @@
 
 <div class="container mt-4">
     <h2 class="mb-4">Document Feed</h2>
-    <a asp-controller="Home" asp-action="Logout" class="btn btn-outline-secondary mb-3">Logout</a>
+    <div class="log-out-btn">
     <a asp-controller="Document" asp-action="Create" class="btn btn-primary mb-3">Upload New Document</a>
+    <a asp-controller="Home" asp-action="Logout" class="btn btn-outline-secondary mb-3">Logout</a>
+    </div>
 
     <!-- Error Message -->
     @if (ViewBag.ErrorMessage != null)

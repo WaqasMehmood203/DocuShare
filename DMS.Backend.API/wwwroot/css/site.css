@@ -23,13 +23,13 @@ header {
     background-color: #fff;
     padding: 0px 20px;
     width: 100%;
-    display: flex;
+/*    display: flex;*/
     align-items: center;
     justify-content: space-between;
     position: sticky;
     top: 0px;
 }
-
+ 
     header .logo {
         display: flex;
         align-items: center;
@@ -37,6 +37,8 @@ header {
     }
 
         header .logo h1 {
+            font-weight:600;
+            font-size: 35px;
             color: #0c3720;
             cursor: pointer;
         }
@@ -236,8 +238,8 @@ footer {
             }
 
                 .list-box .list-bx-heading .search-container .search-btn:hover {
-                    background-color: #075c34;
-                    transition: 0.3s ease;
+                    background-color: #3CB043;
+                    transition: all ease 0.9s;
                 }
 
     .list-box ul {
@@ -255,47 +257,74 @@ footer {
             margin-bottom: 20px;
         }
 
-            .list-box ul li p {
-                margin-right: 1000px;
-            }
+.list-box ul li {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-            .list-box ul li .remove-btn {
-                background-color: red;
-                color: white;
-                padding: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
+.list-box ul li p {
+    flex: 1;
+    margin: 0;
+}
 
-                .list-box ul li .remove-btn:hover {
-                    background-color: #075c34;
-                    transition: 0.3s ease;
-                }
+.Delete-btn,
+.remove-btn {
+    margin-left: 10px;
+    padding: 8px 15px;
+    font-size: 16px;
+    font-weight:400;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-    .list-box .friend-requests {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-top: 20px;
+.Delete-btn {
+    background-color: #c62828;
+    color: white;
+}
+
+    .Delete-btn:hover {
+        background-color: #FF0000;
     }
 
-        .list-box .friend-requests .friend-request-link {
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #0c3720;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+
+
+
+.list-box .friend-requests {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+    overflow: hidden; /* Prevent elements from overflowing */
+    position: relative; /* Ensure button stays within form */
+}
+
+    .list-box .friend-requests .friend-request-link {
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #0c3720;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+        transition: all 0.3s ease; /* Added transition for smooth hover */
+    }
+
+        .list-box .friend-requests .friend-request-link:hover {
+            color: #0c3720;
+            border: 1px solid #0c3720;
+            background-color: #fff;
+            transform: scale(1.05); 
         }
 
-            .list-box .friend-requests .friend-request-link:hover {
-                color: #0c3720;
-                border: 1px solid #0c3720;
-                background-color: #fff;
-                transition: 0.3s ease;
-            }
+
+
 
 .sec-create {
     margin-top: 30px;
@@ -426,7 +455,7 @@ footer {
         }
 
             .friend-box ul li p {
-                margin-right: 930px;
+                margin-right: 850px;
             }
 
             .friend-box ul li .Accept-btn {
@@ -438,14 +467,138 @@ footer {
                 border-radius: 5px;
                 cursor: pointer;
             }
-
+                .friend-box ul li .Accept-btn:hover {
+                    background-color: #3CB043;
+                    transition: all ease 0.9s;
+                }
             .friend-box ul li .remove-btn {
-                background-color: red;
+                background-color: #8B0000;
                 color: white;
                 padding: 10px;
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
             }
+                    .friend-box ul li .remove-btn:hover {
+                        background-color: red;
+                        transition: all ease 0.9s;
+                    }
 
 /*# sourceMappingURL=main.css.map */
+
+
+.navbar-nav .nav-link {
+/*    color: #0c3720;*/
+    font-weight: 600;
+    transition: all 0.3s ease;
+    /*    padding: 10px 15px;*/
+    border-radius: 8px;
+    color: rgb(12, 55, 32);
+}
+
+    .navbar-nav .nav-link:hover {
+        background-color: white;
+        color: #fff;
+    }
+
+.log-out-btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-group label{
+    color:#fff;
+    margin-top: 20px;
+}
+
+ .post-doc{
+    padding: 20px 50px;
+}
+
+.btn-success{
+/*    float: right;*/
+    background-color:#0c3720;
+    color:#fff;
+    margin-top: 20px;
+}
+    .btn-success:hover {
+        background-color: #3CB043;
+        color: #fff;
+        transition: all ease 0.9s;
+    }
+.frndBtn {
+    color: #ffff;
+    background-color: #0c3720;
+    border-radius: 10px;
+    padding: 7px;
+}
+
+    .frndBtn:hover {
+        /*        color: #3CB043;*/
+        background-color: #3CB043;
+        color: #fff;
+        transition: all ease 0.9s;
+    }
+
+.status{
+text-align: end;
+/*    background-color:#0c3720;*/
+    color: #0c3720;
+    font-weight:600;
+}
+
+.remove-btn {
+    background-color: #c62828;
+    color: white;
+    padding: 8px 15px;
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+    .remove-btn:hover {
+        background-color: #FF0000;
+        transition: all ease 0.9s;
+    }
+
+.about-us h1 {
+    color: #0c3720;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.about-us h2 {
+    color: #0c3720;
+    font-size: 24px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.about-us p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.about-us ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+    .about-us ul li {
+        margin-bottom: 10px;
+    }
+
+        .about-us ul li a {
+            color: #0c3720;
+            text-decoration: none;
+        }
+
+            .about-us ul li a:hover {
+                text-decoration: underline;
+            }

@@ -108,6 +108,26 @@ namespace DMS.Backend.API.Controllers
             return RedirectToAction("Index");
         }
 
+        #region Remove Friend
+        [HttpPost]
+        public async Task<IActionResult> RemoveFriend(Guid friendId)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized();
+            }
+
+            var friendships = await _context.Friends
+                .Where(f => (f.UserId == userId && f.FriendId == friendId) || (f.UserId == friendId && f.FriendId == userId))
+                .ToListAsync();
+
+            _context.Friends.RemoveRange(friendships);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+        #endregion
         private Guid GetCurrentUserId()
         {
             var userIdString = HttpContext.Session.GetString("UserId");
