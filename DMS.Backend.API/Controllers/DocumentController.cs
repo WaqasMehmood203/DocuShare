@@ -8,6 +8,7 @@ using System.Security.Claims;
 using static DMS.Backend.Models.Enums;
 using System;
 using DMS.Backend.Services;
+using DMS.Backend.Models;
 
 namespace DMS.Backend.API.Controllers
 #region Constructor
@@ -124,8 +125,7 @@ namespace DMS.Backend.API.Controllers
             {
                 return NotFound();
             }
-
-            // Check visibility permissions
+            //Check visibility permissions
             if (document.Visibility == DocumentVisibility.Private && document.OwnerId != userId)
             {
                 return Unauthorized("You do not have permission to view this private document.");
@@ -142,14 +142,18 @@ namespace DMS.Backend.API.Controllers
                 }
             }
 
+            var likeCount = await _context.Likes.CountAsync(l => l.DocumentId == id);
+            var hasLiked = await _context.Likes.AnyAsync(l => l.DocumentId == id && l.UserId == userId);
+            ViewBag.LikeCount = likeCount;
+            ViewBag.HasLiked = hasLiked;
+
             return View(document);
         }
         #endregion
 
-        #region Post Comment
-        //[HttpPost]
+
         [HttpPost]
-        public async Task<IActionResult> AddComment(Guid documentId, string content, Guid? parentCommentId = null)
+        public async Task<IActionResult> Like(Guid documentId)
         {
             var userIdStr = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
@@ -157,65 +161,129 @@ namespace DMS.Backend.API.Controllers
                 return Unauthorized();
             }
 
-            var document = await _context.Documents
-                .FirstOrDefaultAsync(d => d.Id == documentId && !d.IsDeleted);
+            var document = await _context.Documents.FirstOrDefaultAsync(d => d.Id == documentId && !d.IsDeleted);
             if (document == null)
             {
                 return NotFound();
             }
 
-            // Check visibility permissions
-            if (document.Visibility == DocumentVisibility.Private && document.OwnerId != userId)
+            var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.DocumentId == documentId && l.UserId == userId);
+            if (existingLike != null)
             {
-                return Unauthorized("You do not have permission to comment on this private document.");
+                // Unlike: Remove the like
+                _context.Likes.Remove(existingLike);
             }
-
-            if (document.Visibility == DocumentVisibility.Friends)
+            else
             {
-                var isFriend = await _context.Friends
-                    .AnyAsync(f => (f.UserId == userId && f.FriendId == document.OwnerId) ||
-                                  (f.UserId == document.OwnerId && f.FriendId == userId));
-                if (!isFriend && document.OwnerId != userId)
+                // Like: Add a new like
+                var newLike = new Like
                 {
-                    return Unauthorized("You do not have permission to comment on this friends-only document.");
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    DocumentId = documentId
+                };
+                _context.Likes.Add(newLike);
+
+                // Send notification if not self-like
+                if (document.OwnerId != userId)
+                {
+                    var owner = await _context.Users.FindAsync(document.OwnerId);
+                    var liker = await _context.Users.FindAsync(userId);
+                    var notification = new Notification
+                    {
+                        Id = Guid.NewGuid(),
+                        ReceiverId = document.OwnerId,
+                        Message = $"{liker.FirstName} {liker.LastName} liked your document '{document.Title}'",
+                        Type = Enums.NotificationType.DocumentLiked,
+                        IsRead = false,
+                        CreatedDate = DateTime.UtcNow
+                    };
+                    _context.Notifications.Add(notification);
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(content))
-            {
-                return BadRequest("Comment content cannot be empty.");
-            }
-
-            // Validate parent comment if provided
-            if (parentCommentId.HasValue)
-            {
-                var parentComment = await _context.Comments
-                    .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.DocumentId == documentId && !c.IsDeleted);
-                if (parentComment == null)
-                {
-                    return BadRequest("Parent comment not found or invalid.");
-                }
-            }
-
-            var sanitizer = new HtmlSanitizer();
-            var sanitizedContent = sanitizer.Sanitize(content);
-
-            var comment = new Comment
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                DocumentId = documentId,
-                Content = sanitizedContent,
-                ParentCommentId = parentCommentId,
-                CreatedDate = DateTime.UtcNow
-            };
-
-            _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
-
             return RedirectToAction("ViewDocument", new { id = documentId });
         }
-        #endregion
+
+
+
+        // In DocumentController.cs
+        [HttpPost]
+public async Task<IActionResult> AddComment(Guid documentId, string content, Guid? parentCommentId = null)
+{
+    var userIdStr = HttpContext.Session.GetString("UserId");
+    if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+    {
+        return Unauthorized();
+    }
+
+    var document = await _context.Documents.FirstOrDefaultAsync(d => d.Id == documentId && !d.IsDeleted);
+    if (document == null)
+    {
+        return NotFound();
+    }
+
+    if (document.Visibility == DocumentVisibility.Private && document.OwnerId != userId)
+    {
+        return Unauthorized("You do not have permission to comment on this private document.");
+    }
+    if (document.Visibility == DocumentVisibility.Friends)
+    {
+        var isFriend = await _context.Friends.AnyAsync(f => (f.UserId == userId && f.FriendId == document.OwnerId) || (f.UserId == document.OwnerId && f.FriendId == userId));
+        if (!isFriend && document.OwnerId != userId)
+        {
+            return Unauthorized("You do not have permission to comment on this friends-only document.");
+        }
+    }
+
+    if (string.IsNullOrWhiteSpace(content))
+    {
+        return BadRequest("Comment content cannot be empty.");
+    }
+
+    if (parentCommentId.HasValue)
+    {
+        var parentComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == parentCommentId && c.DocumentId == documentId && !c.IsDeleted);
+        if (parentComment == null)
+        {
+            return BadRequest("Parent comment not found or invalid.");
+        }
+    }
+
+    var sanitizer = new HtmlSanitizer();
+    var sanitizedContent = sanitizer.Sanitize(content);
+
+    var comment = new Comment
+    {
+        Id = Guid.NewGuid(),
+        UserId = userId,
+        DocumentId = documentId,
+        Content = sanitizedContent,
+        ParentCommentId = parentCommentId,
+        CreatedDate = DateTime.UtcNow
+    };
+    _context.Comments.Add(comment);
+
+    if (document.OwnerId != userId)
+    {
+        var owner = await _context.Users.FindAsync(document.OwnerId);
+        var commenter = await _context.Users.FindAsync(userId);
+        var notification = new Notification
+        {
+            Id = Guid.NewGuid(),
+            ReceiverId = document.OwnerId,
+            Message = $"{commenter.FirstName} {commenter.LastName} commented on your document '{document.Title}'",
+            Type = Enums.NotificationType.DocumentCommented,
+            IsRead = false,
+            CreatedDate = DateTime.UtcNow
+        };
+        _context.Notifications.Add(notification);
+    }
+
+    await _context.SaveChangesAsync();
+    return RedirectToAction("ViewDocument", new { id = documentId });
+}        
 
         #region Edit Document
         [HttpGet]
@@ -279,7 +347,7 @@ namespace DMS.Backend.API.Controllers
             _context.Documents.Remove(document);
             await _context.SaveChangesAsync();
             return RedirectToAction("MyDocuments");
-        }
+        }       
     }
 }
 #endregion

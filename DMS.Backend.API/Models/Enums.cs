@@ -24,10 +24,12 @@ namespace DMS.Backend.Models
         public enum NotificationType
         {
             DocumentShared,
-            FriendRequest,
+            FriendRequest, // Used for both received and accepted requests
             DocumentLiked,
-            DocumentCommented
+            DocumentCommented,
+            LoginSuccessful
         }
+
 
         public enum Gender
         {

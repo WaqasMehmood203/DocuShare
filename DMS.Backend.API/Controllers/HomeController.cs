@@ -129,17 +129,28 @@ namespace DMS.Backend.API.Controllers
             return View();
         }
 
+        // In HomeController.cs
         [HttpPost]
         public IActionResult Login(User user)
         {
-            var myUser = _context.Users
-                .Where(x => x.Email == user.Email && x.Password == user.Password)
-                .FirstOrDefault();
-
+            var myUser = _context.Users.FirstOrDefault(u => u.Email == user.Email && u.Password == user.Password);
             if (myUser != null)
             {
                 HttpContext.Session.SetString("UserSession", myUser.Email);
                 HttpContext.Session.SetString("UserId", myUser.Id.ToString());
+
+                var notification = new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = myUser.Id,
+                    Message = "You have successfully logged in.",
+                    Type = Enums.NotificationType.LoginSuccessful,
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                };
+                _context.Notifications.Add(notification);
+                _context.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             else
@@ -183,6 +194,12 @@ namespace DMS.Backend.API.Controllers
         }
 
         [HttpPost]
+        #region Register
+        //        public IActionResult Register()
+        //        {
+        //            return View();
+        //        
+        [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
             if (_context.Users.Any(u => u.Email == user.Email))
@@ -191,16 +208,19 @@ namespace DMS.Backend.API.Controllers
                 return View(user);
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
+
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Registered Successfully";
                 return RedirectToAction("Login");
             }
 
-            return View(user);
+            return View();
         }
+        #endregion
+
         public IActionResult Privacy()
         {
             return View();

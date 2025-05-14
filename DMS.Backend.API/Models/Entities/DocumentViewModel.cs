@@ -17,7 +17,7 @@ namespace DMS.Backend.Models.Entities
         public Guid OwnerId { get; set; }
         public User Owner { get; set; }
         public DocumentVisibility Visibility { get; set; }
-        public string Tags { get; set; } // New: store comma-separated tags directly
+        public string Tags { get; set; } 
 
         public ICollection<Like> Likes { get; set; } = new List<Like>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

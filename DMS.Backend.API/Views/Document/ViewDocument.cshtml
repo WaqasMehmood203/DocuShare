@@ -14,6 +14,7 @@
             @Html.Raw(Model.Content)
         </div>
     </div>
+   
 
     <!-- SEO Analysis Section -->
     <div class="mt-5">
@@ -28,6 +29,8 @@
 
         <ul id="advanced-seo-feedback" class="list-group"></ul>
     </div>
+
+
 
     @if (!string.IsNullOrEmpty(Model.Tags))
     {
@@ -66,6 +69,16 @@
             </div>
     }
 
+    <div>
+        <span><strong>Likes:</strong> @ViewBag.LikeCount</span>
+        <form asp-action="Like" asp-controller="Document" method="post" style="display:inline;">
+            <input type="hidden" name="documentId" value="@Model.Id" />
+            <button type="submit" class="btn btn-@(ViewBag.HasLiked ? "danger" : "primary")">
+                @(ViewBag.HasLiked ? "Unlike" : "Like")
+            </button>
+        </form>
+    </div>
+
     <!-- Add Top-Level Comment Form -->
     @{
         var userIdStr = Context.Session.GetString("UserId");
@@ -89,6 +102,7 @@
     <a asp-action="MyDocuments" asp-controller="Document" class="btn btn-secondary mt-3">Back to My Documents</a>
     <a asp-action="Index" asp-controller="Home" class="btn btn-secondary mt-3">Back to Home</a>
 </div>
+
 
 @section Scripts {
         <script>

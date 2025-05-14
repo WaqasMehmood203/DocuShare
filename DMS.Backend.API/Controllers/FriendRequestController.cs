@@ -30,6 +30,7 @@ namespace DMS.Backend.API.Controllers
             return View(receivedRequests);
         }
 
+        // In FriendRequestController.cs
         [HttpPost]
         public async Task<IActionResult> Accept(Guid id)
         {
@@ -41,13 +42,37 @@ namespace DMS.Backend.API.Controllers
             var request = await _context.FriendRequests.FindAsync(id);
             if (request != null && request.ReceiverId == userId && request.Status == Enums.FriendRequestStatus.Pending)
             {
-                // Update status to Accepted
                 request.Status = Enums.FriendRequestStatus.Accepted;
-                // Create mutual friendships
                 var friend = new Friend { UserId = userId, FriendId = request.SenderId };
                 var friend2 = new Friend { UserId = request.SenderId, FriendId = userId };
                 _context.Friends.Add(friend);
                 _context.Friends.Add(friend2);
+
+                var sender = await _context.Users.FindAsync(request.SenderId);
+                var acceptor = await _context.Users.FindAsync(userId);
+
+                var notificationForSender = new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = request.SenderId,
+                    Message = $"{acceptor.FirstName} {acceptor.LastName} accepted your friend request",
+                    Type = Enums.NotificationType.FriendRequest,
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                };
+                _context.Notifications.Add(notificationForSender);
+
+                var notificationForAcceptor = new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    ReceiverId = userId,
+                    Message = $"You are now friends with {sender.FirstName} {sender.LastName}",
+                    Type = Enums.NotificationType.FriendRequest,
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                };
+                _context.Notifications.Add(notificationForAcceptor);
+
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");

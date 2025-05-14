@@ -67,7 +67,7 @@ namespace DMS.Backend.API.Controllers
 
         #region Send Friend Request
         [HttpPost]
-        public async Task<IActionResult> SendFriendRequest(Guid receiverId)
+        public async Task<IActionResult> SendFriendRequest(Guid receiverId) 
         {
             var userId = GetCurrentUserId();
             var receiver = await _context.Users.FindAsync(receiverId);
@@ -85,13 +85,25 @@ namespace DMS.Backend.API.Controllers
             {
                 return Content("Friend request already sent.");
             }
-            var friendRequest = new FriendRequest
+            var friendRequest = new FriendRequest   
             {
                 SenderId = userId,
                 ReceiverId = receiverId,
                 Status = Enums.FriendRequestStatus.Pending
             };
             _context.FriendRequests.Add(friendRequest);
+            var sender = await _context.Users.FindAsync(userId);
+            var notification = new Notification
+            {
+                Id = Guid.NewGuid(),
+                ReceiverId = receiverId,
+                Message = $"{sender.FirstName} {sender.LastName} sent you a friend request",
+                Type = Enums.NotificationType.FriendRequest,
+                IsRead = false,
+                CreatedDate = DateTime.UtcNow
+            };
+            _context.Notifications.Add(notification);
+
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
