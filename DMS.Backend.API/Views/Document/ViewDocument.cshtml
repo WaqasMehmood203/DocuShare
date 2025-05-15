@@ -9,7 +9,7 @@
     <h2>@Model.Title</h2>
 
     <div class="mb-3">
-        <label><strong>Content:</strong></label>
+        <label style="color:white;"><strong>Content:</strong></label>
         <div class="border p-3" style="background-color:#f8f9fa" id="document-content">
             @Html.Raw(Model.Content)
         </div>
@@ -18,10 +18,10 @@
 
     <!-- SEO Analysis Section -->
     <div class="mt-5">
-        <h4>🧠 Advanced SEO Analysis</h4>
+        <h4 style="color:white;">🧠 Advanced SEO Analysis</h4>
 
         <div class="mb-3">
-            <label for="primary-keyword"><strong>Primary Keyword:</strong></label>
+            <label for="primary-keyword" style="color:white;"><strong>Primary Keyword:</strong></label>
             <input type="text" id="primary-keyword" class="form-control" placeholder="e.g. digital transformation" />
         </div>
 
@@ -35,7 +35,7 @@
     @if (!string.IsNullOrEmpty(Model.Tags))
     {
             <p>
-                <strong>Tags:</strong>
+            <strong style ="color:white;">Tags:</strong>
             @foreach (var tag in Model.Tags.Split(','))
             {
                         <span class="badge bg-secondary me-1">@tag.Trim()</span>
@@ -46,15 +46,15 @@
     @if (!string.IsNullOrEmpty(Model.FilePath))
     {
             <p>
-                <strong>File:</strong>
-                <a href="~/@Model.FilePath" class="btn btn-sm btn-outline-primary" download>Download File</a>
+            <strong style="color:white;">File:</strong>
+            <a href="~/@Model.FilePath" class="btn btn-sm btn-outline-primary" style="color:#fff; background-color:#0d6efd" download>Download File</a>
             </p>
     }
 
-    <p><strong>Created:</strong> @Model.CreatedDate.ToString("g")</p>
+    <p><strong style="color:white;">Created:</strong> @Model.CreatedDate.ToString("g")</p>
 
     <!-- Comments Section -->
-    <h3 class="mt-4">Comments</h3>
+    <h3 class="mt-4" style="color:white;">Comments</h3>
     @if (Model.Comments == null || !Model.Comments.Any())
     {
             <p>No comments yet. Be the first to comment!</p>
@@ -70,7 +70,7 @@
     }
 
     <div>
-        <span><strong>Likes:</strong> @ViewBag.LikeCount</span>
+        <span><strong style="color:white;">Likes:</strong> @ViewBag.LikeCount</span>
         <form asp-action="Like" asp-controller="Document" method="post" style="display:inline;">
             <input type="hidden" name="documentId" value="@Model.Id" />
             <button type="submit" class="btn btn-@(ViewBag.HasLiked ? "danger" : "primary")">
@@ -84,7 +84,7 @@
         var userIdStr = Context.Session.GetString("UserId");
         if (!string.IsNullOrEmpty(userIdStr))
         {
-                    <h4>Add a Comment</h4>
+            <h4 style="color:white;">Add a Comment</h4>
                     <form asp-action="AddComment" method="post">
                         <input type="hidden" name="documentId" value="@Model.Id" />
                         <div class="form-group">
@@ -99,7 +99,8 @@
         }
     }
 
-    <a asp-action="MyDocuments" asp-controller="Document" class="btn btn-secondary mt-3">Back to My Documents</a>
+    <a asp-action="MyDocuments" asp-controller="Document" class="btn 
+mt-3">Back to My Documents</a>
     <a asp-action="Index" asp-controller="Home" class="btn btn-secondary mt-3">Back to Home</a>
 </div>
 

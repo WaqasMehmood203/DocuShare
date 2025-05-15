@@ -2994,9 +2994,10 @@ textarea.form-control-lg {
 }
 
 .btn-secondary {
-  color: #fff;
-  background-color: #6c757d;
-  border-color: #6c757d;
+/*    margin-top: 30px;*/
+    color: #0c3720;
+    background-color: #6c757d;
+    border-color: #6c757d;
 }
 .btn-secondary:hover {
   color: #fff;
@@ -3204,8 +3205,9 @@ textarea.form-control-lg {
 }
 
 .btn-outline-primary {
-  color: #0d6efd;
-  border-color: #0d6efd;
+    color: white;
+    background-color: #0d6efd;
+    border-color: #fff;
 }
 .btn-outline-primary:hover {
   color: #fff;
@@ -4764,7 +4766,8 @@ textarea.form-control-lg {
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-.page-item:not(:first-child) .page-link {
+.
+:not(:first-child) .page-link {
   margin-left: -1px;
 }
 .page-item.active .page-link {
